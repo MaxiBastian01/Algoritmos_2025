@@ -1,0 +1,42 @@
+pila_personajes = [
+    {"nombre": "Ant-Man", "peliculas": 3},
+    {"nombre": "Scarlet Witch", "peliculas": 4},
+    {"nombre": "Hawkeye", "peliculas": 5},
+    {"nombre": "Doctor Strange", "peliculas": 4},
+    {"nombre": "Spider-Man", "peliculas": 3},
+    {"nombre": "Hulk", "peliculas": 6},
+    {"nombre": "Black Widow", "peliculas": 7},
+    {"nombre": "Thor", "peliculas": 8},
+    {"nombre": "Capitán América", "peliculas": 9},
+    {"nombre": "Iron Man", "peliculas": 10},
+    {"nombre": "Rocket Raccoon", "peliculas": 5},
+    {"nombre": "Groot", "peliculas": 5}
+]
+
+#B
+def participaron_en_mas_de_5_peliculas(pila):
+    for personaje in pila:
+        if personaje["peliculas"] >= 5:
+            print(f"{personaje['nombre']} participó en {personaje['peliculas']} películas.")
+#C
+def peliculas_de_black_widow(pila):
+    for personaje in pila:
+        if personaje["nombre"] == "Black Widow":
+            print(f"Black Widow participó en {personaje['peliculas']} películas.")
+            return
+#D
+def personajes_con_letras_CDG(pila):
+    for personaje in pila:
+        inicial = personaje["nombre"][0].upper()
+        if inicial in ["C", "D", "G"]:
+            print(personaje["nombre"])
+#A
+posicion = 1
+for personaje in reversed(pila_personajes):
+    if personaje["nombre"] == "Rocket Raccoon" or personaje["nombre"] == "Groot":
+        print(f"{personaje['nombre']} está en la posición {posicion} desde la cima.")
+    posicion += 1
+
+participaron_en_mas_de_5_peliculas(pila_personajes)
+peliculas_de_black_widow(pila_personajes)
+personajes_con_letras_CDG(pila_personajes)
