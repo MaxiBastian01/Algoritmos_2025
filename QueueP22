@@ -1,0 +1,144 @@
+personajes_mcu = [
+    ("Tony Stark", "Iron Man", "M"),
+    ("Steve Rogers", "Capitán América", "M"),
+    ("Natasha Romanoff", "Black Widow", "F"),
+    ("Carol Danvers", "Capitana Marvel", "F"),
+    ("Scott Lang", "Ant-Man", "M"),
+    ("Stephen Strange", "Doctor Strange", "M"),
+    ("Sam Wilson", "Falcon", "M"),
+    ("Shuri", "Black Panther", "F"),
+    ("Wanda Maximoff", "Scarlet Witch", "F"),
+    ("Peter Parker", "Spider-Man", "M")
+]
+
+class Queue():
+    
+    def __init__(self):
+        self.__element = []
+
+    def attention (self):
+        if self.__element:
+            return self.__element.pop(0)
+        else:
+            None
+    def on_front (self):
+        return self.__element[-1]
+    
+    def size(self):
+        return len(self.__element)
+    
+    def arrive (self, value):
+        self.__element.append(value)
+
+    def show (self):
+        for n in self.__element:
+            print(n)
+    #A
+    def capitana_Marvel(self):
+        aux = []
+        encontrada = False
+        while self.size() > 0:
+            pj = self.attention()
+            if pj.name == "Capitana Marvel":
+                print(f"El nombre real de Capitana Marvel es: {pj.nombreReal}")
+                encontrada = True
+            aux.append(pj)
+        for pj in aux:
+            self.arrive(pj)
+    #B
+    def femeninos(self):
+        aux = []
+        while self.size() > 0:
+            pj = self.attention()
+            if pj.sexo == "F":
+                print(f"{pj}")
+            aux.append(pj)
+
+        for n in aux:
+            self.arrive(n)
+     #C
+    def masculinos(self):
+        aux = []
+        while self.size() > 0:
+            pj = self.attention()
+            if pj.sexo == "M":
+                print(f"{pj}")
+            aux.append(pj)
+
+        for n in aux:
+            self.arrive(n)
+
+    #D
+    def Scott_Lang (self):
+        aux = []
+        encontrada = False
+        while self.size() > 0:
+            pj = self.attention()
+            if pj.nombreReal == "Scott Lang":
+                print(f"Scott Lang es: {pj.name}")
+                encontrada = True
+            aux.append(pj)
+        for pj in aux:
+            self.arrive(pj)
+
+    #E
+    def letra_S(self):
+        aux = []
+        while self.size() > 0:
+            pj = self.attention()
+            if pj.name.startswith("S") or pj.nombreReal.startswith("S"):
+                print(f"{pj}")
+            aux.append(pj)
+    
+        for n in aux:
+            self.arrive(n)
+    #F
+    def Carol_Danvers(self):
+        aux = []
+        encontrada = False
+        while self.size() > 0:
+            pj = self.attention()
+            if pj.nombreReal == "Carol Danvers":
+                print(f"Carol Danvers es:{pj.name}")
+                encontrada = True
+            aux.append(pj)
+        for pj in aux:
+            self.arrive(pj)       
+
+
+
+
+class Marvel ():
+    def __init__(self, name, nombreReal, sexo):
+        self.name = name
+        self.nombreReal = nombreReal
+        self.sexo = sexo 
+
+    def __str__(self):
+        return f"PJ:{self.name}, Nombre Real:  {self.nombreReal},Genero: {self.sexo}"
+
+
+cola_personajes = Queue()
+
+#cargar pj
+for p in personajes_mcu:
+    cola_personajes.arrive(Marvel(p[1], p[0], p[2]))
+#A
+cola_personajes.capitana_Marvel()
+#B
+print("Personajes Femeninos")
+cola_personajes.femeninos()
+#C
+print("Personajes Masculinos")
+cola_personajes.masculinos()
+#D
+cola_personajes.Scott_Lang()
+#E
+print("Personajes cuya inicial es S: ")
+cola_personajes.letra_S()
+#F
+cola_personajes.Carol_Danvers()
+
+
+
+
