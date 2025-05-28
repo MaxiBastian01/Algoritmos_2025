@@ -1,3 +1,8 @@
+Hola profe, buenas tardes. Estuve practicando para el examen con Lista simplemente enlazada y quería consultarle si 
+las funciones que definimos (insertar, eliminar, buscar, lista_vacia, tamaño y barrido) son las correctas a usar.
+Estas son las que tendrias que usar en el examen? Estoy un poco perdido con lista
+
+
 # --- Clase Nodo ---
 class Nodo:
     def __init__(self, dato):
@@ -55,3 +60,6 @@ def barrido(lista):
         print(actual.info, end=' ')
         actual = actual.sig
     print()
+# --- Tamaño ---
+def tamanio(lista):
+    return lista.tamanio
