@@ -1,0 +1,140 @@
+superheroes = [
+    {
+        "nombre": "Linterna Verde",
+        "anio_aparicion": 1940,
+        "casa": "DC",
+        "biografia": "Utiliza un anillo de poder como su principal arma."
+    },
+    {
+        "nombre": "Wolverine",
+        "anio_aparicion": 1974,
+        "casa": "Marvel",
+        "biografia": "Tiene garras retráctiles y un poderoso factor de curación."
+    },
+    {
+        "nombre": "Dr. Strange",
+        "anio_aparicion": 1963,
+        "casa": "Independiente",
+        "biografia": "Es el Hechicero Supremo y protector del universo mágico."
+    },
+    {
+        "nombre": "Iron Man",
+        "anio_aparicion": 1963,
+        "casa": "Marvel",
+        "biografia": "Vuela gracias a su armadura de alta tecnología."
+    },
+    {
+        "nombre": "Batman",
+        "anio_aparicion": 1939,
+        "casa": "DC",
+        "biografia": "Es un detective experto y combate el crimen con su traje especial."
+    },
+    {
+        "nombre": "Superman",
+        "anio_aparicion": 1938,
+        "casa": "DC",
+        "biografia": "Vuela, tiene superfuerza y usa un traje con capa."
+    },
+    {
+        "nombre": "Star-Lord",
+        "anio_aparicion": 1976,
+        "casa": "Marvel",
+        "biografia": "Líder de los Guardianes de la Galaxia, usa armas de energía."
+    },
+    {
+        "nombre": "Flash",
+        "anio_aparicion": 1940,
+        "casa": "DC",
+        "biografia": "Tiene supervelocidad y un traje rojo especial."
+    },
+    {
+        "nombre": "Capitana Marvel",
+        "anio_aparicion": 1968,
+        "casa": "Marvel",
+        "biografia": "Posee fuerza sobrehumana y puede volar."
+    },
+    {
+        "nombre": "Mujer Maravilla",
+        "anio_aparicion": 1941,
+        "casa": "DC",
+        "biografia": "Guerrera amazona con traje simbólico y lazo de la verdad."
+    }
+]
+
+
+# Clase para un héroe individual
+class Superheroe:
+    def __init__(self, nombre, anio_aparicion, casa, biografia):
+        self.nombre = nombre
+        self.anio_aparicion = anio_aparicion
+        self.casa = casa
+        self.biografia = biografia
+    
+    def __str__(self):
+        return (
+            f"Nombre: {self.nombre}\n"
+            f"Año de aparición: {self.anio_aparicion}\n"
+            f"Casa: {self.casa}\n"
+            f"Biografía: {self.biografia}\n"
+        )
+
+
+
+    # Clase para una lista de héroes
+class SuperheroesList(list):
+
+    
+    def sort_by_nombre(self):
+        self.sort(key=lambda heroe: heroe.nombre)
+
+    def show(self):
+        for heroe in self:
+            print(heroe)
+
+    def insert_hero(self, heroe):
+        self.append(heroe)
+
+    def search(self,heroe_name):
+        start = 0 
+        end = len(self) - 1
+        while start <= end:
+            middle = (start + end) // 2
+
+            if self[middle].nombre == heroe_name:
+                return self[middle]  
+            
+            elif self[middle].nombre < heroe_name:
+                start = middle + 1
+            else:
+                end = middle - 1
+
+        return None
+    
+    def delete_value(self, hero_name):
+        heroe = self.search(hero_name)
+        if heroe:
+            index = self.index(heroe)  
+            self.pop(index)            
+            print(f"Heroe '{hero_name}' eliminado.")
+        else:
+            print(f"Heroe '{hero_name}' no encontrado.")
+
+
+
+mis_heroes = SuperheroesList()
+
+for n in superheroes:
+    heroe = Superheroe(n["nombre"], n["anio_aparicion"], n["casa"], n["biografia"])
+    mis_heroes.insert_hero(heroe)
+
+
+mis_heroes.sort_by_nombre()
+resultado = mis_heroes.search("Dr. Strange")
+if resultado:
+    print(f"Heroe encontrado:{resultado}")
+else:
+    print("No se encontró ese heroe.")
+
+heroe = Superheroe("Maxi", 2002,"Concepción del Uruguay", "Sabe hacer milanesas.")
+mis_heroes.insert_hero(heroe)
+
