@@ -1,0 +1,45 @@
+superheroes = [
+    "Iron Man",
+    "Spider-Man",
+    "Captain America",
+    "Thor",
+    "Hulk",
+    "Black Widow",
+    "Doctor Strange",
+    "Scarlet Witch",
+    "Black Panther",
+    "Ant Man",
+    "Wolverine",
+    "Daredevil",
+    "Hawkeye",
+    "Vision",
+    "Falcon"
+]
+#A
+def buscar_capitan(lista, indice=0):
+    
+    if indice >= len(lista):
+        return False
+    
+    if lista[indice] == "Captain America":
+        return True
+    return buscar_capitan(lista, indice + 1)
+
+
+resultado = buscar_capitan(superheroes)
+if resultado == True:
+    print("Capitan America encontrado")
+else:
+    print("Capitan America no encontrado")
+
+#B
+def listar_superheroes(lista, indice=0):
+    
+    if indice >= len(lista):
+        return None
+    print(lista[indice])
+    listar_superheroes(lista, indice + 1)
+
+listar_superheroes(superheroes)
+
+
