@@ -1,0 +1,228 @@
+# Dado un árbol con los nombre de los superhéroes y villanos de la saga Marvel Cinematic Univer- se (MCU), desarrollar un algoritmo que contemple lo siguiente:
+
+# a. además del nombre del superhéroe, en cada nodo del árbol se almacenará un campo booleano que indica si es un héroe o un villano, True y False respectivamente;
+# b. listar los villanos ordenados alfabéticamente;
+# c. mostrar todos los superhéroes que empiezan con C;
+# d. determinar cuántos superhéroes hay el árbol;
+# e. Doctor Strange en realidad está mal cargado. Utilice una búsqueda por proximidad para encontrarlo en el árbol y modificar su nombre;
+# f. listar los superhéroes ordenados de manera descendente;
+# g. generar un bosque a partir de este árbol, un árbol debe contener a los superhéroes y otro a los villanos, luego resolver las siguiente tareas:
+# I. determinar cuántos nodos tiene cada árbol;
+# II. realizar un barrido ordenado alfabéticamente de cada árbol.
+
+from typing import Any, Optional
+
+
+personajes = [
+    {"nombre": "Iron Man", "es_heroe": True},
+    {"nombre": "Captain America", "es_heroe": True},
+    {"nombre": "Thor", "es_heroe": True},
+    {"nombre": "Hulk", "es_heroe": True},
+    {"nombre": "Black Widow", "es_heroe": True},
+    {"nombre": "Hawkeye", "es_heroe": True},
+    {"nombre": "Spider-Man", "es_heroe": True},
+
+    {"nombre": "Doctor S", "es_heroe": True},
+
+    {"nombre": "Black Panther", "es_heroe": True},
+    {"nombre": "Scarlet Witch", "es_heroe": True},
+    {"nombre": "Vision", "es_heroe": True},
+    {"nombre": "Falcon", "es_heroe": True},
+    {"nombre": "Winter Soldier", "es_heroe": True},
+    {"nombre": "Ant-Man", "es_heroe": True},
+    {"nombre": "Captain Marvel", "es_heroe": True},
+    {"nombre": "Star-Lord", "es_heroe": True},
+    {"nombre": "Gamora", "es_heroe": True},
+    {"nombre": "Drax", "es_heroe": True},
+    {"nombre": "Groot", "es_heroe": True},
+    {"nombre": "Rocket Raccoon", "es_heroe": True},
+
+    # Villanos
+    {"nombre": "Thanos", "es_heroe": False},
+    {"nombre": "Loki", "es_heroe": False},
+    {"nombre": "Ultron", "es_heroe": False},
+    {"nombre": "Red Skull", "es_heroe": False},
+    {"nombre": "Hela", "es_heroe": False},
+    {"nombre": "Killmonger", "es_heroe": False},
+    {"nombre": "Mysterio", "es_heroe": False},
+    {"nombre": "Vulture", "es_heroe": False},
+    {"nombre": "Dormammu", "es_heroe": False},
+    {"nombre": "Ronan", "es_heroe": False},
+    {"nombre": "Ego", "es_heroe": False},
+    {"nombre": "Abomination", "es_heroe": False}
+]
+
+
+class SuperHeroeTree:
+
+    class Node:
+        def __init__(self, nombre: str, es_heroe: bool):
+            self.nombre = nombre
+            self.es_heroe = es_heroe
+            self.left = None
+            self.right = None
+
+    def __init__(self):
+        self.root = None
+
+    def insert(self, nombre: str, es_heroe: bool):
+        def __insert(root, nombre: str, es_heroe: bool):
+            if root is None:
+                return SuperHeroeTree.Node(nombre, es_heroe)
+            elif nombre < root.nombre and not root.es_heroe:  # Villanos a la izquierda
+                root.left = __insert(root.left, nombre, es_heroe)
+            else:
+                # Heroes a la derecha
+                root.right = __insert(root.right, nombre, es_heroe)
+            return root
+
+        self.root = __insert(self.root, nombre, es_heroe)
+
+    # B
+    def in_orden(self):
+        def __in_orden(root):
+            if root is not None:
+                __in_orden(root.left)
+                print(root.nombre)
+                __in_orden(root.right)
+        if self.root is not None:
+            __in_orden(self.root)
+
+    # C
+    def heroes_con_c(self):
+        def __in_orden(root):
+            if root is not None:
+                __in_orden(root.left)
+                if root.es_heroe and root.nombre.startswith("C"):
+                    print(root.nombre)
+                __in_orden(root.right)
+        if self.root is not None:
+            __in_orden(self.root)
+
+    # D
+    def contar_heroes(self):
+        contador = 0
+
+        def __in_order(root):
+            nonlocal contador
+            if root is not None:
+                __in_order(root.left)
+                if root.es_heroe:
+                    contador += 1
+                __in_order(root.right)
+        if self.root is not None:
+            __in_order(self.root)
+        return contador
+
+    # E
+    # Imprime los nodos que comienzan con el valor dado, no el nodo en si
+    def proximity_search(self, nombre: Any):
+        def __search(root, nombre):
+            if root is not None:
+                if root.nombre.startswith(nombre):
+                    print(root.nombre)
+                __search(root.left, nombre)
+                __search(root.right, nombre)
+
+        aux = None
+        if self.root is not None:
+            aux = __search(self.root, nombre)
+        return aux
+
+    def change_name(self, nombre, new_name):
+        def __in_orden(root):
+            if root is not None:
+                __in_orden(root.left)
+                if root.nombre == nombre:
+                    root.nombre = new_name
+                __in_orden(root.right)
+        if self.root is not None:
+            __in_orden(self.root)
+
+    # F
+    def post_order(self):
+        def __post_order(root):
+            if root is not None:
+                __post_order(root.right)
+                print(root.nombre)
+                __post_order(root.left)
+        if self.root is not None:
+            __post_order(self.root)
+
+    # G
+    def generar_bosque(self):
+        arbol_heroes = SuperHeroeTree()
+        arbol_villanos = SuperHeroeTree()
+
+        def __in_orden(root):
+            if root is not None:
+                __in_orden(root.left)
+                if root.es_heroe:
+                    arbol_heroes.insert(root.nombre, True)
+                else:
+                    arbol_villanos.insert(root.nombre, False)
+                __in_orden(root.right)
+
+        if self.root is not None:
+            __in_orden(self.root)
+
+        return arbol_heroes, arbol_villanos
+
+
+    def contar_nodos(self):
+        def __contar(root):
+            if root is None:
+                return 0
+            return 1 + __contar(root.left) + __contar(root.right)
+        return __contar(self.root)
+
+    
+
+superArbol = SuperHeroeTree()
+
+for heroe in personajes:
+    superArbol.insert(heroe["nombre"], heroe["es_heroe"])
+
+# b
+print("\nVillanos ordenados alfabéticamente:")
+superArbol.in_orden()
+
+# c
+print("\nSuperhéroes que empiezan con C:")
+superArbol.heroes_con_c()
+
+# d
+print("\nCantidad de superhéroes en el Arbol:")
+resultado = superArbol.contar_heroes()
+print(resultado)
+
+# E
+# Una vez funciona ya no lo encuentra porque ya lo cambió y devuelve a Drax
+print("\nBuscando Doctor mal escrito:")
+superArbol.proximity_search("Dr")
+
+print("\nCorrigiendo")
+superArbol.change_name("Doctor S", "Doctor Strange")
+
+print("\nVerificación después del cambio:")
+superArbol.proximity_search("Doctor")
+
+
+# F
+print("\nSuperhéroes ordenados de manera descendente:")
+superArbol.post_order()
+
+# G
+# I 
+
+print("\nGenerando bosque (separando héroes y villanos)...")
+arbol_heroes, arbol_villanos = superArbol.generar_bosque()
+print("\nCantidad de nodos en el árbol de héroes:", arbol_heroes.contar_nodos())
+print("Cantidad de nodos en el árbol de villanos:", arbol_villanos.contar_nodos())
+
+
+# II - Barrido alfabético
+print("\nHéroes ordenados alfabéticamente:")
+arbol_heroes.in_orden()
+print("\nVillanos ordenados alfabéticamente:")
+arbol_villanos.in_orden()
