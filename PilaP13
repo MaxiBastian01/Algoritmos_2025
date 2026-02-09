@@ -1,3 +1,19 @@
+
+# 13. Dada una pila con los trajes de Iron Man utilizados en las películas de Marvel Cinematic Uni-
+# verse (MCU) de los cuales se conoce el nombre del modelo, nombre de la película en la que se
+# usó y el estado en que quedó al final de la película (Dañado, Impecable, Destruido), resolver
+# las siguientes actividades:
+# a. determinar si el modelo Mark XLIV (Hulkbuster) fue utilizado en alguna de las películas,
+# además mostrar el nombre de dichas películas;
+# b. mostrar los modelos que quedaron dañados, sin perder información de la pila.
+# c. eliminar los modelos de los trajes destruidos mostrando su nombre;
+# d. un modelo de traje puede usarse en más de una película y en una película se pueden usar
+# más de un modelo de traje, estos deben cargarse por separado;
+# e. agregar el modelo Mark LXXXV a la pila, tener en cuenta que no se pueden cargar modelos
+# repetidos en una misma película;
+# f. mostrar los nombre de los trajes utilizados en las películas “Spider-Man: Homecoming” y
+# “Capitan America: Civil War”.
+
 pila_trajes = [
     {"modelo": "Mark III", "pelicula": "Iron Man", "estado": "Destruido"},
     {"modelo": "Mark XLIV", "pelicula": "Avengers: Age of Ultron", "estado": "Dañado"},
@@ -7,12 +23,53 @@ pila_trajes = [
     {"modelo": "Mark XLV", "pelicula": "Avengers: Age of Ultron", "estado": "Destruido"}
 ]
 
+class pila():
+
+    def __init__(self):
+        self.__element = []
+
+    def size(self):
+        return len(self.__element)
+    
+    def pop(self):
+        if self.__element:
+            return self.__element.pop()
+        else:
+            return None
+         
+    def push (self ,value):
+        self.__element.append(value)
+
+    def on_top(self):
+        if self.__element:
+            return self.__element[-1]
+        else:
+            return None
+        
+mi_pila = pila()
+
+for traje in pila_trajes:
+    mi_pila.push(traje)
+
 #A
-def buscar_hulkbuster(pila):
+def punto_A_hulkbuster_con_aux(pila_original):
+    pila_aux = pila()
     peliculas = []
-    for traje in pila:
+
+    # Desapilar todo, filtrar, y guardar en auxiliar
+    while pila_original.size() > 0:
+        traje = pila_original.pop()
+
         if traje["modelo"] == "Mark XLIV":
             peliculas.append(traje["pelicula"])
+
+        pila_aux.push(traje)
+
+    # Restaurar la pila original (queda igual que antes)
+    while pila_aux.size() > 0:
+        pila_original.push(pila_aux.pop())
+
+    #Mostrar resultado
     if peliculas:
         print("El modelo Mark XLIV (Hulkbuster) fue utilizado en las siguientes películas:")
         for peli in peliculas:
@@ -20,63 +77,126 @@ def buscar_hulkbuster(pila):
     else:
         print("El modelo Mark XLIV (Hulkbuster) no fue utilizado en ninguna película.")
 
-
 #B
-def mostrar_modelos_danados(pila):
+def punto_B_danados_con_aux(pila_original):
+    pila_aux = pila()
+    
     print("Modelos que quedaron dañados:")
-    for traje in pila:
+
+    # 1 Desapilar y filtrar
+    while pila_original.size() > 0:
+        traje = pila_original.pop()
+
         if traje["estado"] == "Dañado":
             print("-", traje["modelo"])
+
+        pila_aux.push(traje)
+
+    # 2 Restaurar pila original
+    while pila_aux.size() > 0:
+        pila_original.push(pila_aux.pop())
+
 #C
-def eliminar_modelos_destruidos(pila):
-    pila_aux = []
-    
-    print("Modelos eliminados (estado: Destruido):")
-    while pila:
-        traje = pila.pop()
-        if traje["estado"] == "Destruido":
-            print("-", traje["modelo"])
-        else:
-            pila_aux.append(traje)
-    
-    while pila_aux:
-        pila.append(pila_aux.pop())
+def punto_B_danados_en_aux(pila_original):
+    pila_aux = pila()
+    pila_temp = pila()  # Para restaurar
+
+    # 1Desapilar todo
+    while pila_original.size() > 0:
+        traje = pila_original.pop()
+
+        if traje["estado"] == "Dañado":
+            pila_aux.push(traje)
+
+        pila_temp.push(traje)  # Guardamos todo para restaurar
+
+    # 2Restaurar pila original
+    while pila_temp.size() > 0:
+        pila_original.push(pila_temp.pop())
+
+    # 3Mostrar los dañados desde la pila auxiliar
+    print("Modelos que quedaron dañados:")
+    while pila_aux.size() > 0:
+        traje = pila_aux.pop()
+        print("-", traje["modelo"])
 
 #E
-def agregar_modelo_unico(pila, modelo, pelicula, estado):
-    #verificar si no esta repetido
-    for traje in pila:
+def punto_E_agregar_modelo(pila_original, modelo, pelicula, estado):
+    pila_aux = pila()
+    repetido = False
+
+    while pila_original.size() > 0:
+        traje = pila_original.pop()
+
         if traje["modelo"] == modelo and traje["pelicula"] == pelicula:
-            print(f"El modelo {modelo} ya está cargado para la película '{pelicula}'. No se agrega.")
-            return  
-    
-    #se agrego
-    traje_nuevo = {
-        "modelo": modelo,
-        "pelicula": pelicula,
-        "estado": estado
+            repetido = True
+
+        pila_aux.push(traje)
+
+    while pila_aux.size() > 0:
+        pila_original.push(pila_aux.pop())
+
+    if not repetido:
+        nuevo_traje = {
+            "modelo": modelo,
+            "pelicula": pelicula,
+            "estado": estado
+        }
+        pila_original.push(nuevo_traje)
+        return True
+    else:
+        return False
+
+#F
+def punto_F_mostrar_trajes_en_peliculas(pila_original):
+    pila_aux = pila()
+    encontrados = []
+
+    peliculas_objetivo = {
+        "Spider-Man: Homecoming",
+        "Captain America: Civil War"
     }
-    pila.append(traje_nuevo)
-    print(f"Modelo {modelo} agregado a la película '{pelicula}'.")
 
-#F
-def mostrar_modelos_en_peliculas(pila):
-    for traje in pila:
-        if traje["pelicula"] == "Spider-Man: Homecoming" or traje["pelicula"] == "Capitan America: Civil War":
-            print(f"{traje['modelo']} se usó en {traje['pelicula']}")
+    # Desapilar todo, filtrar y guardar en auxiliar
+    while pila_original.size() > 0:
+        traje = pila_original.pop()
+
+        if traje["pelicula"] in peliculas_objetivo:
+            encontrados.append((traje["modelo"], traje["pelicula"]))
+
+        pila_aux.push(traje)
+
+    #  Restaurar la pila original (queda igual que antes)
+    while pila_aux.size() > 0:
+        pila_original.push(pila_aux.pop())
+
+    #  Mostrar resultados
+    if encontrados:
+        print("Trajes usados en Spider-Man: Homecoming y Captain America: Civil War:")
+        for modelo, peli in encontrados:
+            print(f"- {modelo} se usó en {peli}")
+    else:
+        print("No se encontraron trajes en esas películas.")
 
 
 
 
+#A
+punto_A_hulkbuster_con_aux(mi_pila)
 
-
-#A           
-buscar_hulkbuster(pila_trajes)
 #B
-mostrar_modelos_danados(pila_trajes)
+punto_B_danados_con_aux(mi_pila)
+
 #C
-eliminar_modelos_destruidos(pila_trajes)
+punto_B_danados_en_aux(mi_pila)
+
 #E
-agregar_modelo_unico(pila_trajes, "Mark LXXXV", "Avengers: Endgame", "Impecable")
+agregado = punto_E_agregar_modelo(mi_pila, "Mark LXXXV", "Avengers: Endgame", "Impecable")
+
+if agregado:
+    print("Se agregó correctamente.")
+else:
+    print("No se agregó porque ya existía.")
+
 #F
-mostrar_modelos_en_peliculas(pila_trajes)
+punto_F_mostrar_trajes_en_peliculas(mi_pila)
