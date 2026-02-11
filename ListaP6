@@ -14,6 +14,7 @@
 # g. mostrar toda la información de Flash y Star-Lord;
 # h. listar los superhéroes que comienzan con la letra B, M y S;
 # i. determinar cuántos superhéroes hay de cada casa de comic.
+
 superheroes = [
     {
         "nombre": "Linterna Verde",
@@ -85,7 +86,7 @@ class Superheroe:
         self.anio_aparicion = anio_aparicion
         self.casa = casa
         self.biografia = biografia
-    
+
     def __str__(self):
         return (
             f"Nombre: {self.nombre}\n"
@@ -94,14 +95,10 @@ class Superheroe:
             f"Biografía: {self.biografia}\n"
         )
 
-
-
     # Clase para una lista de héroes
+
+
 class SuperheroesList(list):
-
-
-    def sort_by_nombre(self):
-        self.sort(key=lambda heroe: heroe.nombre)
 
     def show(self):
         for heroe in self:
@@ -110,70 +107,96 @@ class SuperheroesList(list):
     def insert_hero(self, heroe):
         self.append(heroe)
 
-    def search(self,heroe_name):
+    def search(self, heroe_name):
         self.sort_by_nombre()
-        start = 0 
+        start = 0
         end = len(self) - 1
         while start <= end:
             middle = (start + end) // 2
 
             if self[middle].nombre == heroe_name:
-                return self[middle]  
-            
+                return self[middle]
+
             elif self[middle].nombre < heroe_name:
                 start = middle + 1
             else:
                 end = middle - 1
 
         return None
-    
+
     def delete_value(self, hero_name):
         heroe = self.search(hero_name)
         if heroe:
-            index = self.index(heroe)  
-            self.pop(index)            
+            index = self.index(heroe)
+            self.pop(index)
             print(f"Heroe '{hero_name}' eliminado.")
         else:
             print(f"Heroe '{hero_name}' no encontrado.")
 
 
+CRITERION_FUNCTIONS = {}
+
+
+def add_criterion(self, key, function):
+    self.CRITERION_FUNCTIONS[key] = function
+
+def sort_by_criterion(self, criterion_key=None):
+    criterion = self.CRITERION_FUNCTIONS.get(criterion_key)
+
+    if criterion is not None:
+        self.sort(key=criterion)
+    else:
+        print("Criterio no encontrado")
+
+
+def order_by_nombre(heroe):
+    return heroe.nombre
+
+
+def order_by_anio(heroe):
+    return heroe.anio_aparicion
+
+
+def order_by_casa(heroe):
+    return heroe.casa
+
 
 mis_heroes = SuperheroesList()
 for n in superheroes:
-    heroe = Superheroe(n["nombre"], n["anio_aparicion"], n["casa"], n["biografia"])
+    heroe = Superheroe(n["nombre"], n["anio_aparicion"],
+                       n["casa"], n["biografia"])
     mis_heroes.insert_hero(heroe)
 
 
-
-#A
+# A
 mis_heroes.delete_value("Linterna Verde")
 
-#B
+# B
 resultado = mis_heroes.search("Wolverine")
 if resultado:
     print(f"Heroe encontrado:{resultado}")
 else:
     print("No se encontró ese heroe.")
 
-#C 
+# C
 dr_strange = mis_heroes.search("Dr. Strange")
 if dr_strange:
     dr_strange.casa = "Marvel"
 
-#D
+# D
 print("Superheroes cuya biografia menciona 'traje' o 'armadura':")
 for heroe in mis_heroes:
-    bio = heroe.biografia.lower()  
+    bio = heroe.biografia.lower()
     if "traje" in bio or "armadura" in bio:
         print(f"- {heroe.nombre}")
 
-#E
+# E
 print("Superhéroes con año de aparición anterior a 1963:")
-for n in mis_heroes: 
+for n in mis_heroes:
     if n.anio_aparicion < 1963:
         print(f"- {n.nombre} ({n.casa})")
 
-#F
+# F
 for nombre in ["Capitana Marvel", "Mujer Maravilla"]:
     heroe = mis_heroes.search(nombre)
     if heroe:
@@ -181,7 +204,7 @@ for nombre in ["Capitana Marvel", "Mujer Maravilla"]:
     else:
         print(f"{nombre} no encontrado.")
 
-#G
+# G
 for nombre in ["Flash", "Star-Lord"]:
     heroe = mis_heroes.search(nombre)
     if heroe:
@@ -189,14 +212,14 @@ for nombre in ["Flash", "Star-Lord"]:
     else:
         print(f"{nombre} no encontrado.")
 
-#H
+# H
 letras = ["B", "M", "S"]
 print("Superheroes que comienzan con B, M o S:")
 for heroe in mis_heroes:
-    if heroe.nombre[0].upper() in letras: #uper convierte a mayúscula
+    if heroe.nombre[0].upper() in letras:  # uper convierte a mayúscula
         print(f"- {heroe.nombre}")
 
-#I
+# I
 contador = {
     "Marvel": 0,
     "DC": 0,
