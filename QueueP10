@@ -1,25 +1,32 @@
-#Dada una cola con las notificaciones de las aplicaciones de redes sociales de un Smartphone, de las cual se cuenta con la hora de la notificación, 
-#la aplicación que la emitió y el mensaje, resolver las siguientes actividades:
-#a. escribir una función que elimine de la cola todas las notificaciones de Facebook;
-#b. escribir una función que muestre todas las notificaciones de Twitter, cuyo mensaje incluya la palabra ‘Python’, si perder datos en la cola;
-#c. utilizar una pila para almacenar temporáneamente las notificaciones producidas entre las 11:43 y las 15:57, y determinar cuántas son.
+# 10. Dada una cola con las notificaciones de las aplicaciones de redes sociales de un Smartphone,
+# de las cual se cuenta con la hora de la notificación, la aplicación que la emitió y el mensaje,
+# resolver las siguientes actividades:
+# a. escribir una función que elimine de la cola todas las notificaciones de Facebook;
+# b. escribir una función que muestre todas las notificaciones de Twitter, cuyo mensaje incluya
+# la palabra ‘Python’, si perder datos en la cola;
+# c. utilizar una pila para almacenar temporáneamente las notificaciones producidas entre las
+# 11:43 y las 15:57, y determinar cuántas son.
 
-notificaciones_data = [
-    {"hora": "08:15", "app": "Facebook", "mensaje": "Tienes 3 nuevos recuerdos"},
-    {"hora": "10:30", "app": "Facebook", "mensaje": "Nueva publicación de tu amigo"},
-    {"hora": "11:45", "app": "Twitter", "mensaje": "Curso gratis de Python disponible"},
-    {"hora": "13:20", "app": "Twitter", "mensaje": "Conferencia de tecnología en vivo"},
-    {"hora": "14:00", "app": "Twitter", "mensaje": "Tips de Python para principiantes"},
-    {"hora": "09:00", "app": "Instagram", "mensaje": "Nuevo mensaje de Juan"},
-    {"hora": "12:10", "app": "TikTok", "mensaje": "Tendencia: música de los 90"},
-    {"hora": "11:45", "app": "Twitter", "mensaje": "Curso gratis de Python disponible"},
-    {"hora": "13:20", "app": "Twitter", "mensaje": "Conferencia de tecnología en vivo"},
-    {"hora": "14:00", "app": "Twitter", "mensaje": "Tips de Python para principiantes"},
-    {"hora": "15:57", "app": "YouTube", "mensaje": "Nuevo video de tu canal favorito"},
-    {"hora": "08:00", "app": "WhatsApp", "mensaje": "Tienes un nuevo mensaje"},
-    {"hora": "16:10", "app": "Instagram", "mensaje": "Publicación nueva de María"},
+cola_notificaciones = [
+    {"hora": "10:15", "app": "Facebook", "mensaje": "Tienes 3 nuevas reacciones."},
+    {"hora": "11:10", "app": "Instagram", "mensaje": "Nueva historia de tu amigo."},
+    {"hora": "11:50", "app": "Twitter",
+        "mensaje": "Aprendiendo Python con ejercicios de recursión."},
+    {"hora": "12:05", "app": "WhatsApp", "mensaje": "¿Te juntás hoy?"},
+    {"hora": "13:20", "app": "Facebook",
+        "mensaje": "Nuevo comentario en tu publicación."},
+    {"hora": "14:10", "app": "Twitter",
+        "mensaje": "Python es clave para data science."},
+    {"hora": "15:30", "app": "TikTok", "mensaje": "Nuevo video recomendado."},
+    {"hora": "16:05", "app": "Twitter", "mensaje": "Hoy no hablo de programación."},
+    {"hora": "17:45", "app": "Facebook",
+        "mensaje": "Recordatorio: mira tus recuerdos."},
+    {"hora": "18:20", "app": "Telegram", "mensaje": "Mensaje en el grupo de la facu."}
 ]
+
+
 class Queue():
+
     def __init__(self):
         self.__element = []
 
@@ -28,79 +35,97 @@ class Queue():
             return self.__element.pop(0)
         else:
             return None
-    
+
+    def on_front(self):
+        return self.__element[0] if self.__element else None
+
     def size(self):
         return len(self.__element)
-    
+
     def arrive(self, value):
         self.__element.append(value)
 
-    def on_front(self):
-        if self.__element:
-            return self.__element[0]
-        else:
-            return None
-
     def show(self):
-        for item in self.__element:
-            print(f"{item.hora} - {item.app}: {item.mensaje}")
+        for n in self.__element:
+            print(n)
 
-    #A 
-    def facebook_Delete(self):
-        aux = []
-        while self.size() > 0:
-            notif = self.attention()
-            if notif.app == "Facebook":
-                print(f"{notif.hora} - {notif.app}: {notif.mensaje}")
-            aux.append(notif)
-        
-        for n in aux:
-            self.arrive(n)
 
-    #B
-    def Twitter_Python(self):
-        aux = []            
-        seleccionadas = []  
+mi_Queue = Queue()
 
-        while self.size() > 0:
-            notif = self.attention()
-            if notif.app == "Twitter" and "Python" in notif.mensaje:
-                print(f"{notif.hora} - {notif.app}: {notif.mensaje}")
-            aux.append(notif) 
+for notificaciones in cola_notificaciones:
+    mi_Queue.arrive(notificaciones)
 
-        for notif in aux:
-            self.arrive(notif)
+# A
 
-    #C
-    def notificaciones_hora(self):
-        aux = []
-        seleccionadas = []
 
-        while self.size() > 0:
-            notif = self.attention()
-            if "11:43" <= notif.hora <= "15:57":
-                print(f"{notif.hora} - {notif.app}: {notif.mensaje}")
-            aux.append(notif)
-        for notif in aux:
-            self.arrive(notif)
-                
-class Notificaciones():
-    def __init__(self, hora, app, mensaje):
-        self.hora = hora
-        self.app = app
-        self.mensaje = mensaje
+def eliminar_facebook(cola):
+    aux = Queue()
 
-colaNotificaciones = Queue()
+    # Recorremos toda la cola original
+    while cola.size() > 0:
+        noti = cola.attention()
+        if noti["app"] != "Facebook":    # filtramos
+            aux.arrive(noti)             # enqueue en auxiliar
 
-#Cargar pj
-for dato in notificaciones_data:
-    colaNotificaciones.arrive(Notificaciones(dato["hora"], dato["app"], dato["mensaje"]))
+    # Devolvemos todo a la cola original
+    while aux.size() > 0:
+        cola.arrive(aux.attention())
 
-print("Notificaciones de Facebook eliminadas :")
-colaNotificaciones.facebook_Delete()
 
-print("Notificaciones de twiter sobre Python:")
-colaNotificaciones.Twitter_Python()
+# B
+def Twitter_Python(self):
+    aux = []
 
-print("Notificaciones entre 11:43 y 15:57")
-colaNotificaciones.notificaciones_hora()
+    while self.size() > 0:
+        notif = self.attention()
+
+        if notif["app"] == "Twitter" and "Python" in notif["mensaje"]:
+            print(f"{notif['hora']} - {notif['app']}: {notif['mensaje']}")
+
+        aux.append(notif)
+
+    # Restaurar la cola
+    for notif in aux:
+        self.arrive(notif)
+
+# C
+def notificaciones_hora(self):
+    aux = Queue()   # para reconstruir la cola
+    pila_temp = []  # pila (stack) temporal
+    contador = 0
+
+    while self.size() > 0:
+        notif = self.attention()
+
+        if "11:43" <= notif["hora"] <= "15:57":
+            pila_temp.append(notif)  # push
+            contador += 1
+
+        aux.arrive(notif)
+
+    # Restaurar la cola original
+    while aux.size() > 0:
+        self.arrive(aux.attention())
+
+    print(f"Cantidad de notificaciones entre 11:43 y 15:57: {contador}")
+    for notif in pila_temp:
+        print(notif)
+    
+    
+    
+
+
+
+
+# A
+print("Notificaciones sin Facebook")
+eliminar_facebook(mi_Queue)
+mi_Queue.show()
+
+# B
+print("Notificaciones de Twitter con la palabra Python")
+Twitter_Python(mi_Queue)
+
+# C
+print("Notificaciones entre las 11:43 y las 15:57")
+notificaciones_hora(mi_Queue)
