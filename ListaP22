@@ -1,0 +1,221 @@
+# 22. Se dispone de una lista de todos los Jedi, de cada uno de estos se conoce su nombre, maestros,
+# colores de sable de luz usados y especie. implementar las funciones necesarias para resolver las
+# actividades enumeradas a continuación:
+# a. listado ordenado por nombre y por especie;
+# b. mostrar toda la información de Ahsoka Tano y Kit Fisto;
+# c. mostrar todos los padawan de Yoda y Luke Skywalker, es decir sus aprendices;
+# d. mostrar los Jedi de especie humana y twi'lek;
+# e. listar todos los Jedi que comienzan con A;
+# f. mostrar los Jedi que usaron sable de luz de más de un color;
+# g. indicar los Jedi que utilizaron sable de luz amarillo o violeta;
+# h. indicar los nombre de los padawans de Qui-Gon Jin y Mace Windu, si los tuvieron.
+jedis = [
+    {
+        "nombre": "Yoda",
+        "maestros": [],
+        "sables": ["verde"],
+        "especie": "desconocida"
+    },
+    {
+        "nombre": "Luke Skywalker",
+        "maestros": ["Obi-Wan Kenobi", "Yoda"],
+        "sables": ["verde", "azul"],
+        "especie": "humano"
+    },
+    {
+        "nombre": "Anakin Skywalker",
+        "maestros": ["Obi-Wan Kenobi"],
+        "sables": ["azul"],
+        "especie": "humano"
+    },
+    {
+        "nombre": "Obi-Wan Kenobi",
+        "maestros": ["Qui-Gon Jinn"],
+        "sables": ["azul"],
+        "especie": "humano"
+    },
+    {
+        "nombre": "Qui-Gon Jinn",
+        "maestros": ["Conde Dooku"],
+        "sables": ["verde"],
+        "especie": "humano"
+    },
+    {
+        "nombre": "Mace Windu",
+        "maestros": [],
+        "sables": ["violeta"],
+        "especie": "humano"
+    },
+    {
+        "nombre": "Ahsoka Tano",
+        "maestros": ["Anakin Skywalker"],
+        "sables": ["verde", "azul"],
+        "especie": "twi'lek"
+    },
+    {
+        "nombre": "Kit Fisto",
+        "maestros": [],
+        "sables": ["verde"],
+        "especie": "nautolano"
+    },
+    {
+        "nombre": "Plo Koon",
+        "maestros": [],
+        "sables": ["azul"],
+        "especie": "kel dor"
+    },
+    {
+        "nombre": "Shaak Ti",
+        "maestros": [],
+        "sables": ["azul"],
+        "especie": "togruta"
+    },
+    {
+        "nombre": "Adi Gallia",
+        "maestros": [],
+        "sables": ["azul"],
+        "especie": "tholothiana"
+    },
+    {
+        "nombre": "Rey",
+        "maestros": ["Luke Skywalker"],
+        "sables": ["azul", "amarillo"],
+        "especie": "humano"
+    }
+]
+
+
+class nodoJedi:
+
+    def __init__(self, nombre, maestros, sables, especie):
+        self.nombre = nombre
+        self.maestros = maestros
+        self.sables = sables
+        self.especie = especie
+
+    def __str__(self):
+        return (
+            f"Nombre: {self.nombre}\n"
+            f"Maestros: {self.maestros}\n"
+            f"Sables: {self.sables}\n"
+            f"Especie: {self.especie}\n"
+        )
+
+
+class jediList(list):
+
+    def insert_jedi(self, jedi):
+        self.append(jedi)
+
+    CRITERION_FUNCTIONS = {}
+
+    def add_criterion(self, key, function):
+        self.CRITERION_FUNCTIONS[key] = function
+
+    def sort_by_criterion(self, criterion_key=None):
+        criterion = self.CRITERION_FUNCTIONS.get(criterion_key)
+
+        if criterion is not None:
+            self.sort(key=criterion)
+        else:
+            print("Criterio no encontrado")
+
+    def search(self, nombre_buscado):
+        # asegurar orden por nombre
+        self.sort_by_criterion("nombre")
+
+        nombre_buscado = nombre_buscado.lower()
+        start = 0
+        end = len(self) - 1
+
+        while start <= end:
+            middle = (start + end) // 2
+            actual = self[middle].nombre.lower()
+
+            if actual == nombre_buscado:
+                return self[middle]
+            elif actual < nombre_buscado:
+                start = middle + 1
+            else:
+                end = middle - 1
+
+        return None
+
+
+def order_by_nombre(jedi):
+    return jedi.nombre
+
+
+def order_by_especie(jedi):
+    return jedi.especie
+
+
+mis_jedis = jediList()
+
+for j in jedis:
+    jedi = nodoJedi(j["nombre"], j["maestros"],
+                    j["sables"], j["especie"])
+    mis_jedis.insert_jedi(jedi)
+
+# A
+#registrar criterios
+mis_jedis.add_criterion("nombre", order_by_nombre)
+mis_jedis.add_criterion("especie", order_by_especie)
+# Ordenar por nombre
+mis_jedis.sort_by_criterion("nombre")
+# Ordenar por especie
+mis_jedis.sort_by_criterion("especie")
+
+#B
+Tano = mis_jedis.search("Tano")
+Kit = mis_jedis.search("Kit Fisto")
+
+if Tano:
+    print(Tano)
+else:
+    print("No se a encontrado a Tano")
+
+if Kit:
+    print(f"Kit Fisto si fue encontrado:{Kit}")
+else:
+    print("No se a encontrado a Kit Fisto")
+
+#C
+print("Aprendices de Yoda y Luke Skywalker")
+for j in mis_jedis:
+    if "Yoda" in j.maestros or "Luke Skywalker" in j.maestros:
+        print(j.nombre)
+
+#D
+print("Especie humano o twi")
+for j in mis_jedis:
+    if j.especie in ["humano", "twi'lek"]:
+        print(j)
+
+#E
+print("Nombres que empiezan con A:")
+for j in mis_jedis:
+    if j.nombre.upper().startswith("A"):
+        print(j)
+
+#F
+print("Jedi que usaron sable de luz de más de un color:")
+
+for j in mis_jedis:
+    if len(j.sables) > 1:
+        print(j.nombre, "-", j.sables)
+
+#G
+print("Jedi que usaron sable amarillo o violeta:")
+
+for j in mis_jedis:
+    if "amarillo" in j.sables or "violeta" in j.sables:
+        print(j.nombre, "-", j.sables)
+
+#h
+print("Padawans de Qui-Gon Jinn y Mace Windu")
+
+for j in mis_jedis:
+    if "Qui-Gon Jinn" in j.maestros or "Mace Windu" in j.maestros:
+        print(j.nombre)
+
