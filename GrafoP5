@@ -1,0 +1,140 @@
+from typing import Any, Optional
+
+
+class Graph(list):
+
+    def __init__(self, is_directed: bool = False):  # El constructor de la clase Graph recibe un parámetro opcional is_directed que indica si el grafo es dirigido o no. Por defecto, se asume que el grafo no es dirigido (is_directed=False). El constructor inicializa el atributo is_directed con el valor proporcionado y crea una lista vacía llamada vertices para almacenar los vértices del grafo.
+        self.is_directed = is_directed
+        self.vertices: list[Graph._Vertex] = []
+
+    class _Vertex:
+        def __init__(self, value: Any, other_values: Optional[Any] = None):
+            self.value = value
+            self.other_values = other_values
+            self.edges: list[Graph._Edge] = []
+            self.visited = False
+
+        def __str__(self) -> str:
+            return str(self.value)
+
+    class _Edge:
+        def __init__(self, destination: Any, weight: Any, other_values: Optional[Any] = None):
+            # Es el vértice al que se dirige la arista.
+            self.destination = destination
+            self.weight = weight
+            self.other_values = other_values
+
+        def __str__(self) -> str:
+            return f"Destination: {self.destination} with weight --> {self.weight}"
+
+    def insert_vertex(self, value: Any) -> None:
+        self.vertices.append(Graph._Vertex(value))
+
+    def _find_vertex(self, value: Any) -> Optional[_Vertex]:
+        for v in self.vertices:
+            if v.value == value:
+                return v
+        return None
+
+    def insert_edge(self, origin_vertex: Any, destination_vertex: Any, weight: int) -> None:
+        # 1) Busca
+        origin = self._find_vertex(origin_vertex)
+        destination = self._find_vertex(destination_vertex)
+
+        if origin is None or destination is None:
+            print("No se puede insertar: falta uno de los vértices")
+            return
+
+        # Creo la arista
+        edge = Graph._Edge(destination_vertex, weight)
+
+        # La agrego a la lista de aristas del vértice
+        origin.edges.append(edge)
+
+        #  Si el grafo es NO dirigido A<->B, B<->A
+        if not self.is_directed and origin_vertex != destination_vertex:
+            back_edge = Graph._Edge(origin_vertex, weight)
+            destination.edges.append(back_edge)
+
+    def delete_vertex(self, value: Any) -> None:
+        # Buscar el vértice
+        vertex = self._find_vertex(value)
+
+        if vertex is None:
+            print(f"No existe el vértice '{value}'")
+            return
+
+        # Eliminar todas las aristas que apunten a este vértice
+        for v in self.vertices:
+            v.edges = [edge for edge in v.edges if edge.destination != value]
+
+        # Eliminar el vértice de la lista principal
+        self.vertices.remove(vertex)
+
+        print(f"Vértice '{value}' eliminado correctamente")
+
+    def delete_edge(self, origin_vertex: Any, destination_vertex: Any) -> None:
+        # Buscar vértices
+        origin = self._find_vertex(origin_vertex)
+        destination = self._find_vertex(destination_vertex)
+
+        if origin is None or destination is None:
+            print("No se puede eliminar la arista: falta uno de los vértices")
+            return
+
+        # Eliminar arista desde origin hacia destination
+        origin.edges = [
+            edge for edge in origin.edges ## Crea nueva lista filtrando elementos es lo mismo que hacer un for y un if para eliminar el elemento que queremos eliminar
+            if edge.destination != destination_vertex
+        ]
+
+        # Si NO es dirigido, eliminar también la inversa
+        if not self.is_directed:
+            destination.edges = [
+                edge for edge in destination.edges
+                if edge.destination != origin_vertex
+            ]
+
+        print(f"Arista {origin_vertex} -> {destination_vertex} eliminada")
+
+    def show(self) -> None:
+        for vertex in self.vertices:
+            print(f"Vertex: {vertex.value}")
+
+            if not vertex.edges:
+                print("  (sin aristas)")
+            else:
+                for edge in vertex.edges:
+                    print(f"  -> {edge.destination} (peso: {edge.weight})")
+
+    def eliminar_arista(self, vertice: Any, destino: Any):
+        origin = self._find_vertex(vertice)
+        if origin is None:
+            return None  # no existe el vértice
+
+        # Recorrer las aristas del vértice
+        for edge in origin.edges:
+            if edge.destination == destino:
+                origin.edges.remove(edge)  # eliminar la primera coincidencia
+                return edge  # devolver la arista eliminada
+
+        # Si no encontró ninguna
+        return None
+
+
+
+grafo = Graph(is_directed=True)
+
+grafo.insert_vertex("A")
+grafo.insert_vertex("B")
+grafo.insert_vertex("C")
+
+grafo.insert_edge("A", "B", 5)
+grafo.insert_edge("B", "C", 3)
+grafo.insert_edge("C", "A", 2)
+
+
+grafo.show()
+
+grafo.delete_edge("A", "B")
+
