@@ -133,8 +133,11 @@ grafo.insert_edge("A", "B", 5)
 grafo.insert_edge("B", "C", 3)
 grafo.insert_edge("C", "A", 2)
 
-
+print("Grafo antes de eliminar la arista A -> B:")
+grafo.show()
+print("\nEliminando la arista A -> B...")
+grafo.eliminar_arista("A", "B")
 grafo.show()
 
-grafo.delete_edge("A", "B")
+
 
